@@ -139,6 +139,9 @@ describe('sitesReducerTest', function () {
       newState = sitesReducer(newState, addAction)
       assert.equal(Object.keys(newState.get('sites').toJS()).length, 3)
 
+      // sites are sorted after #8075 landed
+      // sites[0] will be order 0, sites[1] will be order 1...etc
+
       // Move the site to the 2nd position
       newState = sitesReducer(newState, moveAction).toJS()
       assert.equal(Object.keys(newState.sites).length, 3)
@@ -149,8 +152,8 @@ describe('sitesReducerTest', function () {
       moveAction.prepend = true
       newState = sitesReducer(Immutable.fromJS(newState), moveAction).toJS()
       assert.equal(Object.keys(newState.sites).length, 3)
-      assert.equal(Object.values(newState.sites)[2].location, url)
-      assert.equal(Object.values(newState.sites)[2].order, 1)
+      assert.equal(Object.values(newState.sites)[1].location, url)
+      assert.equal(Object.values(newState.sites)[1].order, 1)
     })
   })
 })
