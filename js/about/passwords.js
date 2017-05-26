@@ -64,6 +64,7 @@ class SiteItem extends React.Component {
 
   onDelete () {
     aboutActions.deletePassword(this.props.site.toJS())
+    ipc.send(messages.UPDATE_PASSWORD_SITE_DETAILS)
   }
 
   render () {
@@ -95,6 +96,7 @@ class PasswordItem extends React.Component {
 
   onDelete () {
     aboutActions.deletePassword(this.props.password.toJS())
+    ipc.send(messages.UPDATE_PASSWORD_DETAILS)
   }
 
   onCopy () {
@@ -165,6 +167,8 @@ class AboutPasswords extends React.Component {
       'This cannot be undone.'
     if (window.confirm(msg)) {
       aboutActions.clearPasswords()
+      ipc.send(messages.UPDATE_PASSWORD_DETAILS)
+      ipc.send(messages.UPDATE_PASSWORD_SITE_DETAILS)
     }
   }
 

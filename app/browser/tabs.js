@@ -28,6 +28,7 @@ const {cleanupWebContents, currentWebContents, getWebContents, updateWebContents
 const {FilterOptions} = require('ad-block')
 const urlParse = require('../common/urlParse')
 const {isResourceEnabled} = require('../filtering')
+const autofill = require('../autofill')
 
 let currentPartitionNumber = 0
 const incrementPartitionNumber = () => ++currentPartitionNumber
@@ -134,6 +135,14 @@ ipcMain.on(messages.ABOUT_COMPONENT_INITIALIZED, (e) => {
   })
 })
 
+ipcMain.on(messages.UPDATE_PASSWORD_DETAILS, (e) => {
+  autofill.getAutofillableLogins(e.sender)
+})
+
+ipcMain.on(messages.UPDATE_PASSWORD_SITE_DETAILS, (e) => {
+  autofill.getBlackedlistLogins(e.sender)
+})
+
 const getBookmarksData = function (state) {
   let bookmarkSites = new Immutable.Map()
   let bookmarkFolderSites = new Immutable.Map()
@@ -212,13 +221,8 @@ const updateAboutDetails = (tab, tabValue) => {
       downloads: downloads.toJS()
     })
   } else if (location === 'about:passwords' && passwords) {
-    const defaultSession = session.defaultSession
-    defaultSession.autofill.getAutofillableLogins((result) => {
-      tab.send(messages.PASSWORD_DETAILS_UPDATED, result)
-    })
-    defaultSession.autofill.getBlackedlistLogins((result) => {
-      tab.send(messages.PASSWORD_SITE_DETAILS_UPDATED, result)
-    })
+    autofill.getAutofillableLogins(tab)
+    autofill.getBlackedlistLogins(tab)
   } else if (location === 'about:flash') {
     tab.send(messages.BRAVERY_DEFAULTS_UPDATED, braveryDefaults.toJS())
   } else if (location === 'about:newtab') {

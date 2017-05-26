@@ -75,6 +75,8 @@ const messages = {
   GET_MISSPELLING_INFO: _, /** @arg {string} word, the word to lookup */
   PASSWORD_DETAILS_UPDATED: _, /** @arg {Object} passwords app state */
   PASSWORD_SITE_DETAILS_UPDATED: _, /** @arg {Object} passwords app state */
+  UPDATE_PASSWORD_DETAILS: _,
+  UPDATE_PASSWORD_SITE_DETAILS: _,
   // Init
   INITIALIZE_WINDOW: _,
   // Session restore
