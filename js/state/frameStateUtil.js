@@ -293,14 +293,13 @@ const frameOptsFromFrame = (frame) => {
  */
 function addFrame (state, frameOpts, newKey, partitionNumber, activeFrameKey, insertionIndex) {
   const frames = state.get('frames')
-  const url = frameOpts.location || config.defaultUrl
 
-  // delayedLoadUrl is used as a placeholder when the new frame is created
-  // from a renderer initiated navigation (window.open, cmd/ctrl-click, etc...)
-  const delayedLoadUrl = frameOpts.delayedLoadUrl
-  delete frameOpts.delayedLoadUrl
+  const location = frameOpts.location // page url
+  const displayURL = frameOpts.displayURL == null ? location : frameOpts.displayURL
+  delete frameOpts.displayURL
 
-  const location = delayedLoadUrl || url // page url
+  const rendererInitiated = frameOpts.rendererInitiated
+  delete frameOpts.rendererInitiated
 
   // Only add pin requests if it's not already added
   const isPinned = frameOpts.isPinned
@@ -318,20 +317,19 @@ function addFrame (state, frameOpts, newKey, partitionNumber, activeFrameKey, in
     audioMuted: false, // frame is muted
     location,
     aboutDetails: undefined,
-    src: url, // what the iframe src should be
+    src: location, // what the iframe src should be
     tabId: -1,
-    // if this is a delayed load then go ahead and start the loading indicator
-    loading: !!delayedLoadUrl,
-    startLoadTime: delayedLoadUrl ? new Date().getTime() : null,
+    loading: frameOpts.rendererInitiated,
+    startLoadTime: null,
     endLoadTime: null,
     lastAccessedTime: (activeFrameKey === newKey) ? new Date().getTime() : null,
     isPrivate: false,
     partitionNumber,
-    pinnedLocation: isPinned ? url : undefined,
+    pinnedLocation: isPinned ? location : undefined,
     key: newKey,
     navbar: {
       urlbar: {
-        location: url,
+        location: rendererInitiated ? location : displayURL,
         suggestions: {
           selectedIndex: 0,
           searchResults: [],
@@ -428,8 +426,13 @@ function getTotalBlocks (frame) {
     : ((blocked > 99) ? '99+' : blocked)
 }
 
-const frameStatePath = (state, frameKey) =>
-  ['frames', getFrameIndex(state, frameKey)]
+const frameStatePath = (state, frameKey) => {
+  const index = getFrameIndex(state, frameKey)
+  if (index === -1) {
+    return null
+  }
+  return ['frames', getFrameIndex(state, frameKey)]
+}
 
 const activeFrameStatePath = (state) => frameStatePath(state, getActiveFrameKey(state))
 
