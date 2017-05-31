@@ -136,11 +136,15 @@ ipcMain.on(messages.ABOUT_COMPONENT_INITIALIZED, (e) => {
 })
 
 ipcMain.on(messages.UPDATE_PASSWORD_DETAILS, (e) => {
-  autofill.getAutofillableLogins(e.sender)
+  setTimeout(() => {
+    autofill.getAutofillableLogins(e.sender)
+  }, 1000)
 })
 
 ipcMain.on(messages.UPDATE_PASSWORD_SITE_DETAILS, (e) => {
-  autofill.getBlackedlistLogins(e.sender)
+  setTimeout(() => {
+    autofill.getBlackedlistLogins(e.sender)
+  }, 1000)
 })
 
 const getBookmarksData = function (state) {
@@ -180,7 +184,6 @@ const updateAboutDetails = (tab, tabValue) => {
   const history = aboutHistoryState.getHistory(appState)
   const adblock = appState.get('adblock')
   const downloads = appState.get('downloads')
-  const passwords = appState.get('passwords')
   const trackedBlockersCount = appState.getIn(['trackingProtection', 'count'])
   const adblockCount = appState.getIn(['adblock', 'count'])
   const httpsUpgradedCount = appState.getIn(['httpsEverywhere', 'count'])
@@ -220,7 +223,7 @@ const updateAboutDetails = (tab, tabValue) => {
     tab.send(messages.DOWNLOADS_UPDATED, {
       downloads: downloads.toJS()
     })
-  } else if (location === 'about:passwords' && passwords) {
+  } else if (location === 'about:passwords') {
     autofill.getAutofillableLogins(tab)
     autofill.getBlackedlistLogins(tab)
   } else if (location === 'about:flash') {
