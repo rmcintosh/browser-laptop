@@ -36,6 +36,7 @@ class WidevineInfo extends ImmutableComponent {
     return <section data-test-id='widevineInfo'>
       <div className={css(styles.widevineInfo__div)}>
         <span data-l10n-id='enableWidevineSubtext' />
+        <span>&nbsp;</span>
         <span className={cx({
           fa: true,
           'fa-info-circle': true,
@@ -48,6 +49,7 @@ class WidevineInfo extends ImmutableComponent {
       </div>
       <div className={css(styles.widevineInfo__div)}>
         <span data-l10n-id='enableWidevineSubtext2' />
+        <span>&nbsp;</span>
         <span className={cx({
           fa: true,
           'fa-info-circle': true,
